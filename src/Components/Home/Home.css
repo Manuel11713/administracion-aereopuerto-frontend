@@ -1,0 +1,44 @@
+
+.inputs{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+h2{
+    color: #2196f3;
+}
+
+/* width */
+.inputs::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+.inputs::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.inputs::-webkit-scrollbar-thumb {
+    background: #90a4ae;
+    border-radius: 3px;
+}
+
+/* Handle on hover */
+.inputs::-webkit-scrollbar-thumb:hover {
+    background: #546e7a;
+}
+
+.btn-schedule{
+    padding: 30px 0;
+
+   margin: 10px;
+   display: flex;
+   justify-content: center;
+}
+.btn-schedule span{
+    align-self: center;
+}

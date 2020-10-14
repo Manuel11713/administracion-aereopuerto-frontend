@@ -1,0 +1,26 @@
+#map-container{
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    background: rgba(0,0,0,0.6);
+}
+
+/* sdfaf */
+.leaflet-container{
+    align-self: center;
+    width: 80%;
+    height: 80%;
+}
+.close-modal{
+    position: absolute;
+    padding:30px;
+    right: 50px;
+    top: 20px;
+    color: #fff;
+
+    font-size: 32px;
+    cursor: pointer;
+}
