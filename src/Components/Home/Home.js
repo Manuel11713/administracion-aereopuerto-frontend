@@ -11,13 +11,13 @@ import Airplanes from '../Airplanes/Airplanes';
 import ModalMap from '../ModalMap/ModalMap';
 import From from '../From/From';
 import Destination from '../Destination/Destination';
+import Flights from '../Flights/Flights';
 
 import {Button} from 'antd';
-
 import './Home.css';
 import 'leaflet/dist/leaflet.css';
 
-const Home = ({setPilots, setMembers, setLobbies, setHangars, setAirplanes, setFlights}) =>{
+const Home = ({flights, hangars, lobbies, setPilots, setMembers, setLobbies, setHangars, setAirplanes, setFlights}) =>{
     const [showModal, setShowModal] = useState(false); //Show map 
 
     /* actModal just can take 2 values, 0 means that modal was activated from "From" component and 1 means 
@@ -36,21 +36,6 @@ const Home = ({setPilots, setMembers, setLobbies, setHangars, setAirplanes, setF
     const [hangarSelected, setHangarSelected] = useState(null);
     const [airplaneSelected, setAirplaneSelected] = useState(null);
 
-    const makeFlight = () => {
-        if(pilotsSelected.length<2 || 
-            membersSelected.length===0 ||
-            date.length === 0 ||
-            time.length === 0 || 
-            !lobbySelected ||
-            !hangarSelected ||
-            !airplaneSelected ||
-            !origin || 
-            !destination
-        ){
-           return console.log("todos los datos campos deben ser llenados");
-        }
-        console.log('enviado')
-    }
     useEffect(()=>{
         const fetchData = async () => {
             const res = await Promise.all([axios.get('/pilots'), axios.get('/members'), axios.get('/lobbies'), 
@@ -65,6 +50,51 @@ const Home = ({setPilots, setMembers, setLobbies, setHangars, setAirplanes, setF
         }
         fetchData();
     },[setPilots, setMembers, setLobbies, setHangars, setAirplanes, setFlights]);
+
+    const makeFlight = async() => {
+        if(pilotsSelected.length<2 || 
+            membersSelected.length===0 ||
+            date.length === 0 ||
+            time.length === 0 || 
+            !lobbySelected ||
+            !hangarSelected ||
+            !airplaneSelected ||
+            !origin || 
+            !destination
+        ){
+           return console.log("todos los datos campos deben ser llenados");
+        }
+        
+        const data2Backend = {
+            origin, 
+            destination, 
+            date, 
+            airplane_id:airplaneSelected, 
+            hour:time, 
+            lobby_id:lobbySelected, 
+            hangar_id:hangarSelected, 
+            pilots:pilotsSelected, 
+            members:membersSelected
+        }
+       
+        
+        const response = await axios.post('/flight',data2Backend);
+        const {insertId} = response.data;
+        let name_hangar = hangars.filter(hangar => hangar.id === hangarSelected)[0].name_hangar;
+        let name_lobby = lobbies.filter(lobby => lobby.id === lobbySelected)[0].name_lobby;
+        const newFlight = {
+            date,
+            destination,
+            origin,
+            hour: time,
+            id: insertId,
+            name_hangar,
+            name_lobby
+        }
+
+        const updatedFlights = [...flights,newFlight];
+        setFlights(updatedFlights);
+    }
     return(
         <>
          <ModalMap showModal={showModal} actModal={actModal} setDestination={setDestination} setOrigin={setOrigin} setShowModal={setShowModal} />
@@ -81,13 +111,16 @@ const Home = ({setPilots, setMembers, setLobbies, setHangars, setAirplanes, setF
                 <Destination destination={destination} setActModal={setActModal} setShowModal={setShowModal}/>
                 <Button className="btn-schedule" type="primary" onClick={makeFlight}>Schedule Flight</Button>
             </div>
+            <Flights/>
         </div> 
         </>
     );
 }
 const stateToProps = (state) => {
     return({
-        pilots:state.pilots
+        flights:state.flights,
+        hangars: state.hangars,
+        lobbies: state.lobbies
     });
 }
 const dispatchToProps = (dispatch) => {
